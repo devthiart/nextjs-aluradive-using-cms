@@ -1,11 +1,20 @@
 import React from 'react';
+import get from 'lodash/get';
 
 const CMSContext = React.createContext({
   cmsContent: {}
 });
 
-export const getCMSContent = () => {
-  return React.useContext(CMSContext).cmsContent
+export const getCMSContent = (path = '') => {
+  const cmsContent =  React.useContext(CMSContext).cmsContent;
+
+  if(path === '') return cmsContent;
+
+  const output = get(cmsContent, path);
+
+  if(!output) throw new Error(`The path content could not be found. Path: "${path}". Review your query and try again."`);
+
+  return output;
 }
 
 export default function CMSProvider({ cmsContent, children }) {
