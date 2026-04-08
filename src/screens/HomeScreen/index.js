@@ -2,11 +2,37 @@ import Head from 'next/head';
 import { Menu } from '../../components/commons/Menu';
 import { Footer } from '../../components/commons/Footer';
 import { theme, Box, Button, Text, Image } from '../../theme/components';
+import { pageHOC } from '../../components/wrappers/pageHOC';
+import { cmsService } from '../../infra/cms/cmsService';
 
-export function getStaticProps() {
+export async function getStaticProps({ preview }) {
+  const contentQuery = `
+    query {
+      __typename
+    }
+  `;
+
+  const { data:cmsContent } = await cmsService({
+    query: contentQuery,
+    preview: preview,
+  });
+
   return {
-    props: {}
+    props: {
+      cmsContent: cmsContent
+    }
   }
+  // return {
+  //   props: {
+  //     cmsContent: {
+  //       globalContent: {
+  //         globalFooter: {
+  //           description: 'Mocked Value'
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 function HomeScreen() {
@@ -69,4 +95,4 @@ function HomeScreen() {
   )
 }
 
-export default HomeScreen;
+export default pageHOC(HomeScreen);
